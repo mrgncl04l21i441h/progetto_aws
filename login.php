@@ -6,7 +6,7 @@ if (isset($username) && isset($password)) {
     require "connect.php";
         
     $query = "SELECT * FROM utenti WHERE username = '".$username."' AND password = '" . $password . "';";
-    $result = $conn->query($query);
+    $result = mysqli_query($conn, $query);
     if ($result->num_rows > 0) {
         header("location: relazione.html");
     } else {
