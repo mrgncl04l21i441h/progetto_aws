@@ -1,10 +1,10 @@
 <?php
 $hostname="database:3306";
-$username="root";
-$password="root";
+$dbusername="root";
+$dbpassword="root";
 $database="aws";
 
-$conn=new mysqli($hostname,$username,$password,$database);
+$conn=new mysqli($hostname,$dbusername,$dbpassword,$database);
 
 if ($conn->connect_error) {
   die("Connessione fallita: " . $conn->connect_error);

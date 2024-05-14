@@ -7,7 +7,7 @@ if (isset($username) && isset($password)) {
     
     
 
-    $query = "SELECT * FROM utenti WHERE username = '".$username."' AND password = '".$password."';";
+    $query = "SELECT * FROM utenti WHERE username = '".$username."' AND password = '".md5($password)."';";
     $result = $conn->query($query);
     if ($result->num_rows > 0) {
         header("location: relazione.html");
