@@ -84,13 +84,13 @@
 
 
 <div class="crt">
-    FROM php:7.2-apache
-    COPY src/ /var/www/html/
-    COPY config/httpd.conf /etc/apache2/sites-available/000-default.conf
-    COPY certs/* /certs/
-    RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
-    RUN a2enmod ssl && a2enmod rewrite
-    EXPOSE 80
+    FROM php:7.2-apache<br />
+    COPY src/ /var/www/html/<br />
+    COPY config/httpd.conf /etc/apache2/sites-available/000-default.conf<br />
+    COPY certs/* /certs/<br />
+    RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli<br />
+    RUN a2enmod ssl && a2enmod rewrite<br />
+    EXPOSE 80<br />
     EXPOSE 443
     <span class="blink">_</span>
 </div>
@@ -135,12 +135,12 @@
     ubuntu@ip-172-31-27-235:~/progetto$ sudo apt-get install mysql-client<br />
     ubuntu@ip-172-31-27-235:~/progetto$ mysql -u root -p -h 127.0.0.1:3306<br />
     mysql-> CREATE DATABASE aws;<br />
-    mysql-> USE aws;
-    mysql-> CREATE TABEL utenti(
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                username VARCHAR(50),
-                password VARCHAR(50)
-            );
+    mysql-> USE aws;<br />
+    mysql-> CREATE TABEL utenti(<br />
+    &nbsp; id INT AUTO_INCREMENT PRIMARY KEY,<br />
+    &nbsp; username VARCHAR(50),<br />
+    &nbsp; password VARCHAR(50)<br />
+    );<br />
     mysql-> INSERT INTO utenti (username, password) VALUES (riccardo_andronaco, passowrd in md5), (ignazio_mistretta, password in md5);
     <span class="blink">_</span>
 </div>
