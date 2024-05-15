@@ -10,14 +10,15 @@
     <div class="text">
         Per prima cosa aggiorniamo il sistema e installiamo docker
     </div>
+    
     <div class="crt">
+        
         ubuntu@ip-172-31-27-235:~$ sudo apt update<br />
         ubuntu@ip-172-31-27-235:~$ sudo apt upgrade<br />
         ubuntu@ip-172-31-27-235:~$ sudo apt install docker.io<br />
         <span class="blink">_</span>
     </div>
-    <div id="powerBtn">I/O</div>
-
+   
     <div class="text">
       Ora creiamo una per il progetto, ed al suo interno creiamo una sottocartella chiamata certs.
       Subito dopo andiamo a creare i certificati con il comando apposta
@@ -29,7 +30,7 @@
       ubuntu@ip-172-31-27-235:~/progetto$ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout certs/key.pem -out certs/cert.pem<br />
       <span class="blink">_</span>
   </div>
-  <div id="powerBtn">I/O</div>
+ 
 
   <div class="text">
     Ora creiamo la cartella di configurazione ed il file httpd.conf
@@ -41,7 +42,7 @@
     ubuntu@ip-172-31-27-235:~/progetto/config$ nano httpd.conf<br />
     <span class="blink">_</span>
 </div>
-<div id="powerBtn">I/O</div>
+
 
 <div class="text">
   All'interno di httpd.conf mettiamo le regole per le porte, in particolare per impedire il traffico sulla porta di http
@@ -60,7 +61,7 @@
     &lt;/VirtualHost&gt;
   <span class="blink">_</span>
 </div>
-<div id="powerBtn">I/O</div>
+
 
 <div class="text">
     Ora è il momento di caricare il sito, creiamo una sottocartella chiamata src, la colleghiamo a git e facciamo il pull
@@ -70,7 +71,7 @@
     ubuntu@ip-172-31-27-235:~/progetto/src$ git clone https://github.com/mrgncl04l21i441h/progetto_aws.git .<br />
     <span class="blink">_</span>
 </div>
-<div id="powerBtn">I/O</div>
+
   
 <div class="text">
     Ora abbiamo tutto il necessario per creare il Dockerfile, creiamo il dockerfile e all'interno scriviamo questo
@@ -80,7 +81,7 @@
     ubuntu@ip-172-31-27-235:~/progetto$ nano Dockerfiel<br />
     <span class="blink">_</span>
 </div>
-<div id="powerBtn">I/O</div>
+
 
 <div class="crt">
     FROM php:7.2-apache
@@ -93,7 +94,7 @@
     EXPOSE 443
     <span class="blink">_</span>
 </div>
-<div id="powerBtn">I/O</div>
+
 
 <div class="text">
     Adesso buildiamo il file e runniamo il container
@@ -103,7 +104,7 @@
     ubuntu@ip-172-31-27-235:~/progetto$ sudo docker run -p 80:80 -p 443:443 boh:1.0<br />
     <span class="blink">_</span>
 </div>
-<div id="powerBtn">I/O</div>
+
 
 <div class="text">
     Ora dobbiamo creare il database, ci affideremo all'immagine di mariaDB e prima bisogna creare il volume
@@ -114,7 +115,7 @@
     ubuntu@ip-172-31-27-235:~/progetto$ sudo docker run --detach --name database --env MARIADB_ROOT_PASSWORD=root -v volumeDB:/var/lib/mysql -p 3306:3306 mariadb<br />
     <span class="blink">_</span>
 </div>
-<div id="powerBtn">I/O</div>
+
 
 <div class="text">
     Adesso che abbiamo entrambi i container dobbiamo creare un  network e aggiungerli ad esso
@@ -125,7 +126,7 @@
     ubuntu@ip-172-31-27-235:~/progetto$ sudo docker network connect net database<br />
     <span class="blink">_</span>
 </div>
-<div id="powerBtn">I/O</div>
+
 
 <div class="text">
     Ora Installiamo il client di mysql per avere accesso al database, poi creiamo il db la tabella e la popoliamo
@@ -143,7 +144,7 @@
     mysql-> INSERT INTO utenti (username, password) VALUES (riccardo_andronaco, passowrd in md5), (ignazio_mistretta, password in md5);
     <span class="blink">_</span>
 </div>
-<div id="powerBtn">I/O</div>
+
 
 </body>
 </html>
