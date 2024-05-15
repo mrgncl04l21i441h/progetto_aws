@@ -7,11 +7,143 @@
     <link href="css/styleTerminal.css" rel="stylesheet">
   </head>
   <body>
-        Per prima cosa aggiorniamo il sistema con:
+    <div class="text">
+        Per prima cosa aggiorniamo il sistema e installiamo docker
+    </div>
     <div class="crt">
         ubuntu@ip-172-31-27-235:~$ sudo apt update<br />
+        ubuntu@ip-172-31-27-235:~$ sudo apt upgrade<br />
+        ubuntu@ip-172-31-27-235:~$ sudo apt install docker.io<br />
         <span class="blink">_</span>
     </div>
     <div id="powerBtn">I/O</div>
-  </body>
+
+    <div class="text">
+      Ora creiamo una per il progetto, ed al suo interno creiamo una sottocartella chiamata certs.
+      Subito dopo andiamo a creare i certificati con il comando apposta
+  </div>
+  <div class="crt">
+      ubuntu@ip-172-31-27-235:~$ mkdir progetto<br />
+      ubuntu@ip-172-31-27-235:~$ cd progetto<br />
+      ubuntu@ip-172-31-27-235:~/progetto$ mkdir certs<br />
+      ubuntu@ip-172-31-27-235:~/progetto$ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout certs/key.pem -out certs/cert.pem<br />
+      <span class="blink">_</span>
+  </div>
+  <div id="powerBtn">I/O</div>
+
+  <div class="text">
+    Ora creiamo la cartella di configurazione ed il file httpd.conf
+</div>
+<div class="crt">
+    ubuntu@ip-172-31-27-235:~/progetto$ mkdir config<br />
+    ubuntu@ip-172-31-27-235:~/progetto$ cd config<br />
+    ubuntu@ip-172-31-27-235:~/progetto/config$ touch httpd.conf<br />
+    ubuntu@ip-172-31-27-235:~/progetto/config$ nano httpd.conf<br />
+    <span class="blink">_</span>
+</div>
+<div id="powerBtn">I/O</div>
+
+<div class="text">
+  All'interno di httpd.conf mettiamo le regole per le porte, in particolare per impedire il traffico sulla porta di http
+</div>
+<div class="crt">
+  &lt;VirtualHost *:80&gt;<br>
+    &nbsp;&nbsp;&lt;RewriteEngine On&gt;<br>
+    &nbsp;&nbsp;&lt;RewriteCond %{HTTPS} off&gt;<br>
+    &nbsp;&nbsp;&lt;RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}&gt;<br>
+    &lt;/VirtualHost&gt;<br>
+    &lt;VirtualHost *:443&gt;<br>
+    &nbsp;&nbsp;DocumentRoot "/var/www/html"<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;SSLEngine on<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;SSLCertificateFile /certs/cert.pem<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;SSLCertificateKeyFile /certs/key.pem<br>
+    &lt;/VirtualHost&gt;
+  <span class="blink">_</span>
+</div>
+<div id="powerBtn">I/O</div>
+
+<div class="text">
+    Ora è il momento di caricare il sito, creiamo una sottocartella chiamata src, la colleghiamo a git e facciamo il pull
+</div>
+<div class="crt">
+    ubuntu@ip-172-31-27-235:~/progetto$ mkdir src<br />
+    ubuntu@ip-172-31-27-235:~/progetto/src$ git clone https://github.com/mrgncl04l21i441h/progetto_aws.git .<br />
+    <span class="blink">_</span>
+</div>
+<div id="powerBtn">I/O</div>
+  
+<div class="text">
+    Ora abbiamo tutto il necessario per creare il Dockerfile, creiamo il dockerfile e all'interno scriviamo questo
+</div>
+<div class="crt">
+    ubuntu@ip-172-31-27-235:~/progetto$ touch Dockerfile<br />
+    ubuntu@ip-172-31-27-235:~/progetto$ nano Dockerfiel<br />
+    <span class="blink">_</span>
+</div>
+<div id="powerBtn">I/O</div>
+
+<div class="crt">
+    FROM php:7.2-apache
+    COPY src/ /var/www/html/
+    COPY config/httpd.conf /etc/apache2/sites-available/000-default.conf
+    COPY certs/* /certs/
+    RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
+    RUN a2enmod ssl && a2enmod rewrite
+    EXPOSE 80
+    EXPOSE 443
+    <span class="blink">_</span>
+</div>
+<div id="powerBtn">I/O</div>
+
+<div class="text">
+    Adesso buildiamo il file e runniamo il container
+</div>
+<div class="crt">
+    ubuntu@ip-172-31-27-235:~/progetto$ sudo docker build . -t boh:1.0<br />
+    ubuntu@ip-172-31-27-235:~/progetto$ sudo docker run -p 80:80 -p 443:443 boh:1.0<br />
+    <span class="blink">_</span>
+</div>
+<div id="powerBtn">I/O</div>
+
+<div class="text">
+    Ora dobbiamo creare il database, ci affideremo all'immagine di mariaDB e prima bisogna creare il volume
+</div>
+<div class="crt">
+    ubuntu@ip-172-31-27-235:~/progetto$ sudo docker volume create volumeDB<br />
+    ubuntu@ip-172-31-27-235:~/progetto$ sudo docker pull mariadb<br />
+    ubuntu@ip-172-31-27-235:~/progetto$ sudo docker run --detach --name database --env MARIADB_ROOT_PASSWORD=root -v volumeDB:/var/lib/mysql -p 3306:3306 mariadb<br />
+    <span class="blink">_</span>
+</div>
+<div id="powerBtn">I/O</div>
+
+<div class="text">
+    Adesso che abbiamo entrambi i container dobbiamo creare un  network e aggiungerli ad esso
+</div>
+<div class="crt">
+    ubuntu@ip-172-31-27-235:~/progetto$ sudo docker network create net<br />
+    ubuntu@ip-172-31-27-235:~/progetto$ sudo docker network connect net (nome container apache)<br />
+    ubuntu@ip-172-31-27-235:~/progetto$ sudo docker network connect net database<br />
+    <span class="blink">_</span>
+</div>
+<div id="powerBtn">I/O</div>
+
+<div class="text">
+    Ora Installiamo il client di mysql per avere accesso al database, poi creiamo il db la tabella e la popoliamo
+</div>
+<div class="crt">
+    ubuntu@ip-172-31-27-235:~/progetto$ sudo apt-get install mysql-client<br />
+    ubuntu@ip-172-31-27-235:~/progetto$ mysql -u root -p -h 127.0.0.1:3306<br />
+    mysql-> CREATE DATABASE aws;<br />
+    mysql-> USE aws;
+    mysql-> CREATE TABEL utenti(
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                username VARCHAR(50),
+                password VARCHAR(50)
+            );
+    mysql-> INSERT INTO utenti (username, password) VALUES (riccardo_andronaco, passowrd in md5), (ignazio_mistretta, password in md5);
+    <span class="blink">_</span>
+</div>
+<div id="powerBtn">I/O</div>
+
+</body>
 </html>
